@@ -85,6 +85,10 @@ export default function LocalDetailPage() {
   async function saveDetails(e: FormEvent) {
     e.preventDefault()
     if (!form) return
+    if (!form.owner_id) {
+      setError('Seleccioná un admin como owner antes de guardar.')
+      return
+    }
     await run(() => ops.updateBusiness(id, {
       name: form.name,
       address: form.address || null,
@@ -115,6 +119,7 @@ export default function LocalDetailPage() {
   }
 
   const activeAdmins = admins.filter(a => a.status !== 'deleted')
+  const ownerIsAdmin = activeAdmins.some(a => a.id === form.owner_id)
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-6">
@@ -145,10 +150,20 @@ export default function LocalDetailPage() {
               </Field>
             </div>
             <Field label="Owner (admin)">
-              <Select value={form.owner_id} onChange={e => setForm(v => v && { ...v, owner_id: e.target.value })}>
+              <Select value={ownerIsAdmin ? form.owner_id : ''} onChange={e => setForm(v => v && { ...v, owner_id: e.target.value })}>
+                <option value="" disabled>
+                  {ownerIsAdmin
+                    ? '— Seleccionar admin —'
+                    : `Owner actual: ${business.owner.email} (no es admin) — elegí uno`}
+                </option>
                 {activeAdmins.map(a => <option key={a.id} value={a.id}>{a.name} — {a.email}</option>)}
               </Select>
             </Field>
+            {!ownerIsAdmin && (
+              <p className="text-xs text-[#DC2626]">
+                El owner actual ({business.owner.email}) no es un admin válido. Elegí un admin para corregirlo.
+              </p>
+            )}
             <p className="text-xs text-[#9CA3AF]">La configuración de fidelidad (sellos, premios) se administra desde el panel del comercio.</p>
             <Button type="submit" disabled={saving}>Guardar cambios</Button>
           </form>
