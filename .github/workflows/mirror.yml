@@ -1,0 +1,28 @@
+name: Mirror to personal repo
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Rewrite commit author
+        run: |
+          git config user.name "strix-bitgarden"
+          git config user.email "strix.bitgarden@gmail.com"
+          git commit --amend --no-edit --reset-author
+
+      - name: Push to personal repo
+        run: |
+          git remote add personal "https://x-access-token:${PAT}@github.com/strix-bitgarden/StrixWatchFrontend.git"
+          git push personal main --force
+        env:
+          PAT: ${{ secrets.PERSONAL_PAT }}
