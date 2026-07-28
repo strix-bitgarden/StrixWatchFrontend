@@ -6,8 +6,8 @@ import { API_BASE_URL } from '@/lib/config'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [identifier, setIdentifier] = useState('ops@strix.dev')
-  const [password, setPassword] = useState('ops1234')
+  const [identifier, setIdentifier] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -45,11 +45,11 @@ export default function LoginPage() {
         </div>
         <label className="flex flex-col gap-2 text-sm">
           Usuario o email
-          <input className="h-11 rounded-xl border border-[#D1D5DB] px-3" value={identifier} onChange={e => setIdentifier(e.target.value)} />
+          <input className="h-11 rounded-xl border border-[#D1D5DB] px-3" value={identifier} onChange={e => setIdentifier(e.target.value)} required autoComplete="username" autoFocus />
         </label>
         <label className="flex flex-col gap-2 text-sm">
           Contraseña
-          <input type="password" className="h-11 rounded-xl border border-[#D1D5DB] px-3" value={password} onChange={e => setPassword(e.target.value)} />
+          <input type="password" className="h-11 rounded-xl border border-[#D1D5DB] px-3" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
         </label>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         <button disabled={loading} className="h-11 rounded-xl bg-[#5471FF] text-white font-semibold disabled:opacity-50">
